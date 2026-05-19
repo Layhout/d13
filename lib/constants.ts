@@ -1,4 +1,4 @@
-export const CARD_RANKS = [
+export const DECK = [
   "3s",
   "3c",
   "3d",
@@ -51,8 +51,10 @@ export const CARD_RANKS = [
   "2c",
   "2d",
   "2h",
-];
+] as const;
 
 export const CARD_WIDTH = 223;
 export const CARD_HEIGHT = 324;
 export const CARD_ASPECT_RATIO = CARD_WIDTH / CARD_HEIGHT;
+
+export const DEFAULT_CARD_SIZE_PERCENT = 12;
