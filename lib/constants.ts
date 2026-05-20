@@ -56,5 +56,5 @@ export const DECK = [
 export const CARD_WIDTH = 223;
 export const CARD_HEIGHT = 324;
 export const CARD_ASPECT_RATIO = CARD_WIDTH / CARD_HEIGHT;
-
 export const DEFAULT_CARD_SIZE_PERCENT = 12;
+export const PLAYER_POSITIONS = ["N", "E", "S", "W"] as const;

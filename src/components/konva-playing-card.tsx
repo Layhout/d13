@@ -10,16 +10,18 @@ interface Props {
   x?: number;
   y?: number;
   index?: number;
+  sizePercentage?: number;
+  onSelect?: (card: PlayingCard) => void;
 }
 
-export const KonvaPlayingCard = ({ card, x = 0, y = 0, index = 0 }: Props) => {
+export const KonvaPlayingCard = ({ card, x = 0, y = 0, index = 0, sizePercentage, onSelect }: Props) => {
   const r = useRef<Konva.Image>(null);
   const isSelected = useRef<boolean>(false);
   const [image] = useImage(`/src/assets/cards/${card}.svg`);
-  const { width, height } = getPlayingCardSize();
+  const { width, height } = getPlayingCardSize(sizePercentage);
 
   const handleMouseEnter = () => {
-    if (isSelected.current) return;
+    if (isSelected.current || !onSelect) return;
     r.current?.to({
       y: y - 20,
       duration: 0.1,
@@ -27,7 +29,7 @@ export const KonvaPlayingCard = ({ card, x = 0, y = 0, index = 0 }: Props) => {
   };
 
   const handleMouseLeave = () => {
-    if (isSelected.current) return;
+    if (isSelected.current || !onSelect) return;
     r.current?.to({
       y: y,
       duration: 0.1,
@@ -35,6 +37,8 @@ export const KonvaPlayingCard = ({ card, x = 0, y = 0, index = 0 }: Props) => {
   };
 
   const handleClick = () => {
+    if (!onSelect) return;
+    onSelect(card);
     isSelected.current = !isSelected.current;
     if (isSelected.current) {
       r.current?.to({
@@ -58,7 +62,7 @@ export const KonvaPlayingCard = ({ card, x = 0, y = 0, index = 0 }: Props) => {
       width={width}
       height={height}
       shadowBlur={10}
-      shadowColor="#000"
+      shadowOpacity={0.5}
       shadowOffset={{ x: 0, y: 10 }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

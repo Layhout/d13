@@ -7,8 +7,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function getPlayingCardSize() {
-  const width = (DEFAULT_CARD_SIZE_PERCENT / 100) * window.innerWidth;
+export function getPlayingCardSize(percent: number = DEFAULT_CARD_SIZE_PERCENT) {
+  const width = (percent / 100) * window.innerWidth;
   const height = width / CARD_ASPECT_RATIO;
 
   return {
