@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/jetbrains-mono";
+@import "@fontsource/archivo-black";
 
 /* @custom-variant dark (&:is(.dark *));
 
@@ -132,6 +133,7 @@
 @theme inline {
   --font-heading: var(--font-mono);
   --font-mono: "JetBrains Mono Variable", monospace;
+  --font-black: "Archivo Black", sans-serif;
   /* --font-head: var(--font-head);
   --font-sans: var(--font-sans); */
   --radius: var(--radius);
@@ -189,10 +191,18 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-mono;
+  }
+}
+
+@layer components {
+  .base-background {
+    @apply relative bg-[#35654d] before:absolute before:inset-0 before:bg-[url(/src/assets/grain.png)] before:bg-repeat before:opacity-5 min-h-screen min-w-screen;
   }
 }
