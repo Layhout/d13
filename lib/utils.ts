@@ -62,27 +62,22 @@ function getComboType(cards: PlayingCard[]): CombinationType | null {
 
   const getCardRank = (card: PlayingCard) => RANK_ORDER.indexOf(card[0]);
 
-  // Solo: 1 card
   if (cards.length === 1) return CombinationType.SOLO;
 
-  // Doubles: 2 cards of the same value
   if (cards.length === 2) {
     if (getCardRank(cards[0]) === getCardRank(cards[1])) return CombinationType.DOUBLE;
   }
 
-  // Triples: 3 cards of the same value
   if (cards.length === 3) {
     const r0 = getCardRank(cards[0]);
     if (cards.every(c => getCardRank(c) === r0)) return CombinationType.TRIPLE;
   }
 
-  // Quads: 4 cards of the same value
   if (cards.length === 4) {
     const r0 = getCardRank(cards[0]);
     if (cards.every(c => getCardRank(c) === r0)) return CombinationType.QUAD;
   }
 
-  // Runs: 3 or more cards that run in sequence (no 2s)
   if (cards.length >= 3) {
     const ranks = cards.map(getCardRank).sort((a, b) => a - b);
     const hasTwo = ranks.includes(12);
@@ -98,7 +93,6 @@ function getComboType(cards: PlayingCard[]): CombinationType | null {
     }
   }
 
-  // Double runs: 2 sets of 3 or more cards that have the same straight-number sequence (no 2s)
   if (cards.length >= 6 && cards.length % 2 === 0) {
     const ranks = cards.map(getCardRank).sort((a, b) => a - b);
     const hasTwo = ranks.includes(12);
@@ -141,24 +135,18 @@ export function canPlay(played: PlayingCard[], nextPlay: PlayingCard[]): boolean
   const nextHighestIndex = getHighestCardIndex(nextPlay);
   const playedHighestIndex = getHighestCardIndex(played);
 
-  // 1. Standard Case: Same combination type and same number of cards
   if (nextType === playedType && nextPlay.length === played.length) {
     return nextHighestIndex > playedHighestIndex;
   }
 
-  // 2. Chop and Bomb exceptions (special beats)
-
-  // A. Beating Deuces (2s)
-  const isDeuces = played.every(c => c[0] === "2");
+  const isDeuces = played.every(c => c[0] === RANK_ORDER[12]);
   if (isDeuces) {
     const numDeuces = played.length;
 
-    // A Quad (four-of-a-kind) can beat a single 2
     if (nextType === CombinationType.QUAD && numDeuces === 1) {
       return true;
     }
 
-    // A Double Run of P pairs (length 2 * P) can beat `numDeuces` deuces if P >= numDeuces + 2
     if (nextType === CombinationType.DOUBLE_RUN) {
       const nextPairs = nextPlay.length / 2;
       if (nextPairs >= numDeuces + 2) {
@@ -167,24 +155,19 @@ export function canPlay(played: PlayingCard[], nextPlay: PlayingCard[]): boolean
     }
   }
 
-  // B. Beating a played Double Run
   if (playedType === CombinationType.DOUBLE_RUN) {
     const playedPairs = played.length / 2;
 
-    // A Quad can beat a 3-pair double run
     if (nextType === CombinationType.QUAD && playedPairs === 3) {
       return true;
     }
 
-    // A larger Double Run (at least 4 pairs if played was 3, etc.) can beat it
     if (nextType === CombinationType.DOUBLE_RUN && nextPlay.length > played.length) {
       return true;
     }
   }
 
-  // C. Beating a played Quad
   if (playedType === CombinationType.QUAD) {
-    // A Double Run of at least 4 pairs (length >= 8) can beat a Quad
     if (nextType === CombinationType.DOUBLE_RUN && nextPlay.length >= 8) {
       return true;
     }
@@ -205,10 +188,8 @@ export function isAutoWin(cards: PlayingCard[]): boolean {
     counts.set(rank, (counts.get(rank) || 0) + 1);
   }
 
-  // 1. Four 2s (four deuces)
-  if (counts.get("2") === 4) return true;
+  if (counts.get(RANK_ORDER[12]) === 4) return true;
 
-  // 2. Dragon Run (Rồng): 13 consecutive cards (ranks 3 to 2)
   let isDragon = true;
   for (const rank of RANK_ORDER) {
     if (counts.get(rank) !== 1) {
@@ -218,14 +199,12 @@ export function isAutoWin(cards: PlayingCard[]): boolean {
   }
   if (isDragon) return true;
 
-  // 3. Six Pairs (any 6 pairs)
   let totalPairs = 0;
   for (const count of counts.values()) {
     totalPairs += Math.floor(count / 2);
   }
   if (totalPairs >= 6) return true;
 
-  // 4. Five Consecutive Pairs (consecutive double run of 5 pairs)
   for (let i = 0; i <= RANK_ORDER.length - 5; i++) {
     let hasFiveConsecutive = true;
     for (let j = 0; j < 5; j++) {
@@ -238,7 +217,6 @@ export function isAutoWin(cards: PlayingCard[]): boolean {
     if (hasFiveConsecutive) return true;
   }
 
-  // 5. Four Triples (four three-of-a-kinds)
   let totalTriples = 0;
   for (const count of counts.values()) {
     if (count >= 3) {
