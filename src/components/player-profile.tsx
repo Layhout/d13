@@ -8,10 +8,11 @@ interface Props {
   isPassed?: boolean;
   isOffline?: boolean;
   isTurn?: boolean;
+  isReady?: boolean;
   placed?: "1" | "2" | "3" | "4";
 }
 
-export const PlayerProfile = ({ name, avatarName, isPassed = false, isOffline = false, isTurn = false, placed = null }: Props) => {
+export const PlayerProfile = ({ name, avatarName, isPassed = false, isOffline = false, isTurn = false, isReady = false, placed = null }: Props) => {
   return (
     <Card className={`flex relative ${isTurn ? "bg-primary" : ""}`}>
       <Card.Content>
@@ -23,6 +24,11 @@ export const PlayerProfile = ({ name, avatarName, isPassed = false, isOffline = 
           {isOffline && (
             <Badge size="sm" className="bg-destructive text-white">
               Offline
+            </Badge>
+          )}
+          {isReady && (
+            <Badge size="sm" className="bg-green-600 text-white hover:bg-green-600/90">
+              Ready
             </Badge>
           )}
           {placed && <Badge size="sm">{{ 1: "1st", 2: "2nd", 3: "3rd", 4: "4th" }[placed]}</Badge>}

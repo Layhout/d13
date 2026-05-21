@@ -2,7 +2,6 @@ export const CARD_WIDTH = 223;
 export const CARD_HEIGHT = 324;
 export const CARD_ASPECT_RATIO = CARD_WIDTH / CARD_HEIGHT;
 export const DEFAULT_CARD_SIZE_PERCENT = 12;
-export const PLAYER_POSITIONS = ["N", "E", "S", "W"] as const;
 export const W_WIDTH = window.innerWidth;
 export const W_HEIGHT = window.innerHeight;
 
@@ -60,9 +59,8 @@ export const DECK = [
   "2d",
   "2h",
 ] as const;
-
-export const RANK_ORDER = ["3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A", "2"];
-export const SUIT_ORDER = ["s", "c", "d", "h"];
+export const RANK_ORDER = ["3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A", "2"] as const;
+export const SUIT_ORDER = ["s", "c", "d", "h"] as const;
 export const AVATAR_NAMES = [
   "Mary Baker",
   "Amelia Earhart",
@@ -163,4 +161,15 @@ export const AVATAR_NAMES = [
   "Marian Anderson",
   "Virginia Apgar",
   "Mary Walton",
+] as const;
+export const NOT_FOUND_MSG = [
+  "The page you’re looking for took a sick leave.",
+  "Oops. This page has left the chat.",
+  "This page is playing hide and seek. Winning, apparently.",
+  "You broke the internet. Again.",
+  "The page escaped our developers.",
+  "We checked everywhere. Even under the couch.",
+  "Congratulations! You discovered a secret empty page.",
+  "The page you seek has been yeeted into another dimension.",
+  "You weren’t supposed to be here.",
 ] as const;

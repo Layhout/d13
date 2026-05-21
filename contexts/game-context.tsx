@@ -1,4 +1,4 @@
-import type { PlayerPosition, PlayingCard } from "@/lib/types";
+import { PlayerPosition, type PlayingCard } from "@/lib/types";
 import { dealCards, sortHand } from "@/lib/utils";
 import { type PropsWithChildren, createContext, use, useRef, useState } from "react";
 
@@ -29,7 +29,7 @@ export function GameProvider({ children }: PropsWithChildren) {
     return sortHand(hand1);
   });
   const [playedCards] = useState<PlayingCard[]>([]);
-  const [turn] = useState<PlayerPosition>("N");
+  const [turn] = useState<PlayerPosition>(PlayerPosition.NORTH);
 
   const selectedCards = useRef<PlayingCard[]>([]);
 

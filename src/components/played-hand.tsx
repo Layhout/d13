@@ -1,4 +1,5 @@
 import { getPlayingCardSize } from "@/lib/utils";
+import { PlayerPosition } from "@/lib/types";
 import { Layer } from "react-konva";
 import { useEffect, useRef } from "react";
 import Konva from "konva";
@@ -22,19 +23,19 @@ export const PlayedHand = () => {
     let initX = 0;
     let initY = 0;
     switch (turn) {
-      case "N":
+      case PlayerPosition.NORTH:
         initX = targetX;
         initY = -height;
         break;
-      case "E":
+      case PlayerPosition.EAST:
         initX = W_WIDTH;
         initY = targetY;
         break;
-      case "S":
+      case PlayerPosition.SOUTH:
         initX = targetX;
         initY = W_HEIGHT;
         break;
-      case "W":
+      case PlayerPosition.WEST:
         initX = -(width + (playedCards.length - 1) * width * 0.5);
         initY = targetY;
         break;

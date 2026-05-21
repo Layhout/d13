@@ -2,9 +2,21 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { AVATAR_NAMES, CARD_ASPECT_RATIO, DECK, DEFAULT_CARD_SIZE_PERCENT, RANK_ORDER } from "./constants";
 import { CombinationType, type PlayingCard } from "./types";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+export function randomNumBetween(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+export async function getClientId(): Promise<string> {
+  const fp = await FingerprintJS.load();
+  const result = await fp.get();
+
+  return result.visitorId;
 }
 
 export function getPlayingCardSize(percent: number = DEFAULT_CARD_SIZE_PERCENT) {
@@ -60,7 +72,7 @@ export function getRandomAvatarName() {
 function getComboType(cards: PlayingCard[]): CombinationType | null {
   if (cards.length === 0) return null;
 
-  const getCardRank = (card: PlayingCard) => RANK_ORDER.indexOf(card[0]);
+  const getCardRank = (card: PlayingCard) => RANK_ORDER.indexOf(card[0] as (typeof RANK_ORDER)[number]);
 
   if (cards.length === 1) return CombinationType.SOLO;
 
