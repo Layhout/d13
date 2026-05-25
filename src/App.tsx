@@ -16,7 +16,7 @@ import Avatar from "boring-avatars";
 import { Input } from "./components/retroui/Input";
 import { AVATAR_NAMES } from "@/lib/constants";
 import { GithubLogoIcon, PencilIcon } from "@phosphor-icons/react";
-import { listen, write } from "@/lib/realtime";
+import { listen, update, write } from "@/lib/realtime";
 import { Card } from "./components/retroui/Card";
 import { Badge } from "./components/retroui/Badge";
 import { useNavigate } from "react-router";
@@ -36,6 +36,7 @@ export default function App() {
   const [create] = useCreateUserWithEmailAndPassword(auth);
 
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const playerIsJoiningAGame = useRef(false);
 
   const handleSaveProfile = async () => {
     if (!user?.uid) return;
@@ -58,8 +59,8 @@ export default function App() {
   const addPlayerToRoom = async (roomId: number) => {
     const firstEmptySlot = games[roomId].players.findIndex(player => !player);
     if (firstEmptySlot === -1) return;
-
-    await write(`game/${roomId}/players/${firstEmptySlot}`, profile);
+    playerIsJoiningAGame.current = true;
+    await write(`game/${roomId}/players/${firstEmptySlot}`, { ...profile, isReady: false });
     navigate(`/game/${roomId}`);
   };
 
@@ -103,6 +104,34 @@ export default function App() {
 
     return () => unsub();
   }, []);
+
+  useEffect(() => {
+    if (!games || !profile || playerIsJoiningAGame.current) return;
+
+    const gameIndexWithPlayer = games.findIndex(game => game.players.some(player => player?.id === profile?.id));
+    if (gameIndexWithPlayer === -1) return;
+
+    write(`game/${gameIndexWithPlayer}/players/${games[gameIndexWithPlayer].players.findIndex(player => player?.id === profile?.id)}`, false);
+  }, [games, profile]);
+
+  useEffect(() => {
+    if (!games) return;
+
+    const resetGamesMap = games.reduce(
+      (p, c, i) => {
+        if (c.players.filter(p => !p?.id).length === 4) {
+          p[`game/${i}/status`] = "idle";
+          p[`game/${i}/hands`] = [false, false, false, false];
+          p[`game/${i}/players`] = [false, false, false, false];
+          p[`game/${i}/played`] = false;
+        }
+        return p;
+      },
+      {} as Record<string, unknown>,
+    );
+
+    if (Object.keys(resetGamesMap).length > 0) update(resetGamesMap);
+  }, [games]);
 
   if (loading)
     return (
@@ -154,7 +183,7 @@ export default function App() {
                   <Card key={index}>
                     <Card.Header className="pb-0 flex-row gap-2 justify-between">
                       <Card.Title className="font-black">Room {index + 1}</Card.Title>
-                      {game.started ? (
+                      {game.status === "ongoing" ? (
                         <Badge className="bg-red-600 text-white" size="sm">
                           In Progress...
                         </Badge>

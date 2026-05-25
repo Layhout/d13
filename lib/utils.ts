@@ -38,27 +38,27 @@ export function shuffle<T>(array: T[]): T[] {
   return arr;
 }
 
-export function dealCards(): { hand1: PlayingCard[]; hand2: PlayingCard[]; hand3: PlayingCard[]; hand4: PlayingCard[] } {
+export function dealCards(): { hand0: PlayingCard[]; hand1: PlayingCard[]; hand2: PlayingCard[]; hand3: PlayingCard[] } {
   const deck = DECK.slice();
   const shuffledDeck = shuffle(deck);
+  const hand0: PlayingCard[] = [];
   const hand1: PlayingCard[] = [];
   const hand2: PlayingCard[] = [];
   const hand3: PlayingCard[] = [];
-  const hand4: PlayingCard[] = [];
 
   for (let i = 0; i < shuffledDeck.length; i++) {
     if (i % 4 === 0) {
-      hand1.push(shuffledDeck[i]);
+      hand0.push(shuffledDeck[i]);
     } else if (i % 4 === 1) {
-      hand2.push(shuffledDeck[i]);
+      hand1.push(shuffledDeck[i]);
     } else if (i % 4 === 2) {
-      hand3.push(shuffledDeck[i]);
+      hand2.push(shuffledDeck[i]);
     } else {
-      hand4.push(shuffledDeck[i]);
+      hand3.push(shuffledDeck[i]);
     }
   }
 
-  return { hand1, hand2, hand3, hand4 };
+  return { hand0: sortHand(hand0), hand1: sortHand(hand1), hand2: sortHand(hand2), hand3: sortHand(hand3) };
 }
 
 export function sortHand(hand: PlayingCard[]): PlayingCard[] {
@@ -264,4 +264,24 @@ export const organizePlayerSeats = (players: (Player | boolean)[], mainPlayerId:
   );
 
   return playerMap;
+};
+
+export const organizePlayerHands = (hands: (PlayingCard[] | boolean)[], anchorPlayerIndex: number): Partial<Record<PlayerPosition, PlayingCard[]>> => {
+  const handsByOrder = [];
+
+  for (let i = 0; i < Math.max(hands.length, 4); i++) {
+    const index = (anchorPlayerIndex + i) % hands.length;
+    handsByOrder.push(hands[index]);
+  }
+
+  const handMap = handsByOrder.reduce(
+    (p, c, i) => {
+      const position = SEAT_MAP[i];
+      p[position] = c;
+      return p;
+    },
+    {} as Record<PlayerPosition, PlayingCard[]>,
+  );
+
+  return handMap;
 };

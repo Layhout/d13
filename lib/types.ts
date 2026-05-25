@@ -29,9 +29,11 @@ export interface Player extends Profile {
   place?: "1" | "2" | "3" | "4";
 }
 
+export type GameStatus = "start" | "ongoing" | "idle";
+
 export interface Game {
   players: Player[];
   played: PlayingCard[];
-  started: boolean;
   hands: PlayingCard[][];
+  status: GameStatus;
 }

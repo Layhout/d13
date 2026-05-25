@@ -5,14 +5,12 @@ import { KonvaPlayingCard } from "./konva-playing-card";
 import { useGameContext } from "@/contexts/game-context";
 
 export const MainHand = () => {
-  const { mainHand, onSelectCard } = useGameContext();
+  const { mainHand, onSelectCard, selectedCards } = useGameContext();
   const { width, height } = getPlayingCardSize();
 
   return (
     <Layer x={W_WIDTH / 2 - (width + (mainHand.length - 1) * width * 0.5) / 2} y={W_HEIGHT - height * 0.7}>
-      {mainHand.map((card, index) => (
-        <KonvaPlayingCard key={index} card={card} index={index} onSelect={onSelectCard} />
-      ))}
+      {mainHand && mainHand?.map((card, index) => <KonvaPlayingCard key={index} card={card} index={index} isSelected={selectedCards.includes(card)} onSelect={onSelectCard} />)}
     </Layer>
   );
 };

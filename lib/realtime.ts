@@ -1,4 +1,4 @@
-import { onValue, ref, set } from "firebase/database";
+import { onValue, ref, set, update as updateFirebase } from "firebase/database";
 import { rdb } from "./firebase";
 
 export const listen = <T>(path: string, callback: (data: T) => void): (() => void) => {
@@ -11,4 +11,8 @@ export const listen = <T>(path: string, callback: (data: T) => void): (() => voi
 export const write = async (path: string, data: unknown) => {
   const pathRef = ref(rdb, path);
   await set(pathRef, data);
+};
+
+export const update = async (data: Record<string, unknown>) => {
+  await updateFirebase(ref(rdb), data);
 };
