@@ -15,12 +15,23 @@ export enum CombinationType {
   RUN = "run",
   DOUBLE_RUN = "double_run",
 }
-export interface Player {
-  id: string;
+
+export interface Profile {
   name: string;
-  hand: PlayingCard[];
-  isReady: boolean;
-  isOffline: boolean;
-  isTurn: boolean;
-  isPassed: boolean;
+  avatarName: string;
+  id?: string;
+}
+
+export interface Player extends Profile {
+  isReady?: boolean;
+  isTurn?: boolean;
+  isPass?: boolean;
+  place?: "1" | "2" | "3" | "4";
+}
+
+export interface Game {
+  players: Player[];
+  played: PlayingCard[];
+  started: boolean;
+  hands: PlayingCard[][];
 }

@@ -1,3 +1,5 @@
+import { PlayerPosition } from "./types";
+
 export const CARD_WIDTH = 223;
 export const CARD_HEIGHT = 324;
 export const CARD_ASPECT_RATIO = CARD_WIDTH / CARD_HEIGHT;
@@ -173,3 +175,10 @@ export const NOT_FOUND_MSG = [
   "The page you seek has been yeeted into another dimension.",
   "You weren’t supposed to be here.",
 ] as const;
+
+export const SEAT_MAP = {
+  0: PlayerPosition.SOUTH,
+  1: PlayerPosition.EAST,
+  2: PlayerPosition.NORTH,
+  3: PlayerPosition.WEST,
+} as const;

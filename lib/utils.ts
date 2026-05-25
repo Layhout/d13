@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { AVATAR_NAMES, CARD_ASPECT_RATIO, DECK, DEFAULT_CARD_SIZE_PERCENT, RANK_ORDER } from "./constants";
-import { CombinationType, type PlayingCard } from "./types";
+import { AVATAR_NAMES, CARD_ASPECT_RATIO, DECK, DEFAULT_CARD_SIZE_PERCENT, RANK_ORDER, SEAT_MAP } from "./constants";
+import { CombinationType, PlayerPosition, type Player, type PlayingCard } from "./types";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
 export function cn(...inputs: ClassValue[]) {
@@ -239,3 +239,29 @@ export function isAutoWin(cards: PlayingCard[]): boolean {
 
   return false;
 }
+
+export const organizePlayerSeats = (players: (Player | boolean)[], mainPlayerId: string): Partial<Record<PlayerPosition, Player>> | undefined => {
+  if (!mainPlayerId || !players.length) return {};
+
+  let anchorIndex = players.findIndex(p => p && (p as Player).id === mainPlayerId);
+  if (anchorIndex === -1 && players.length < 4) return;
+  if (anchorIndex === -1) anchorIndex = 3;
+
+  const newPlayerOrder = [];
+
+  for (let i = 0; i < Math.max(players.length, 4); i++) {
+    const index = (anchorIndex + i) % players.length;
+    newPlayerOrder.push(players[index]);
+  }
+
+  const playerMap = newPlayerOrder.reduce(
+    (p, c, i) => {
+      const position = SEAT_MAP[i];
+      p[position] = c;
+      return p;
+    },
+    {} as Record<PlayerPosition, Player>,
+  );
+
+  return playerMap;
+};
